@@ -24,8 +24,11 @@ jobs:
           cd build
           cmake --build . --config Release -j 4
 
-      - name: Upload Compiled Binary
+            - name: Upload Compiled Binary
         uses: actions/upload-artifact@v4
         with:
           name: sd-cli-android-arm64
-          path: build/bin/sd
+          path: |
+            build/bin/
+            build/sd
+
