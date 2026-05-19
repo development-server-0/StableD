@@ -1,0 +1,31 @@
+name: Compile Android SD Engine
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout stable-diffusion.cpp
+        run: git clone --recursive https://github.com/leejet/stable-diffusion.cpp .
+
+      - name: Configure CMake with Android NDK
+        run: |
+          mkdir build && cd build
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-29 \
+            -DSD_OPENMP=OFF
+
+      - name: Compile Engine
+        run: |
+          cd build
+          cmake --build . --config Release -j 4
+
+      - name: Upload Compiled Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: sd-cli-android-arm64
+          path: build/bin/sd
